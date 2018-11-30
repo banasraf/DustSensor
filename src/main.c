@@ -1,9 +1,7 @@
-#include <gpio.h>
-#include <stm32.h>
 #include <leds.h>
 
 int main() {
-    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN | RCC_AHB1ENR_GPIOCEN;
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
     __NOP();
     Green2LEDoff();
 
