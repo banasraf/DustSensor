@@ -13,7 +13,8 @@ set(CMAKE_FLAGS)
 set(CMAKE_C_FLAGS "-DSTM32F411xE \
     -mthumb -mcpu=cortex-m4 \
     -O2 -g \
-    -Wall -Wextra -pedantic \
+    -Wall -Wextra \
+    -Wno-unused-parameter \
     -ffunction-sections -fdata-sections \
 	-I/opt/arm/stm32/inc \
 	-I/opt/arm/stm32/CMSIS/Include \

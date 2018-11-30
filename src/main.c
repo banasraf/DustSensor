@@ -1,6 +1,6 @@
 #include <gpio.h>
 #include <stm32.h>
-#include "../include/leds.h"
+#include <leds.h>
 
 int main() {
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN | RCC_AHB1ENR_GPIOCEN;
@@ -14,7 +14,7 @@ int main() {
                      GPIO_PuPd_NOPULL);
     for (;;) {
         Green2LEDon();
-        Delay(300000);
+        Delay(500000);
         Green2LEDoff();
         Delay(300000);
     }
