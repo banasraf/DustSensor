@@ -5,10 +5,10 @@ w STM32F0xx, STM32F2xx, STM32F3xx, STM32F4xx, STM32FLxx, ... **/
 
 /* Typ wzięty z biblioteki STM32 */
 typedef enum {
-  GPIO_Mode_IN  = 0x00,
+  GPIO_Mode_IN = 0x00,
   GPIO_Mode_OUT = 0x01,
-  GPIO_Mode_AF  = 0x02,
-  GPIO_Mode_AN  = 0x03
+  GPIO_Mode_AF = 0x02,
+  GPIO_Mode_AN = 0x03
 } GPIOMode_TypeDef;
 
 /* Ten kod nie kompiluje się na STM32F10x. Funkcje z tego modułu
@@ -26,7 +26,7 @@ zapewniają przenośności kodu źródłowego. */
   mode    -- EXTI_Mode_Interrupt (0), EXTI_Mode_Event (4), EXTI_Mode_Disable (255);
   trigger -- zbocze wyzwalające: EXTI_Trigger_Irrelevant (0), EXTI_Trigger_Rising (8),
              EXTI_Trigger_Falling (12), EXTI_Trigger_Rising_Falling (16). */
-void GPIOinConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n,
+void GPIOinConfigure(GPIO_TypeDef *const gpio, uint32_t pin_n,
                      GPIOPuPd_TypeDef pull, EXTIMode_TypeDef mode,
                      EXTITrigger_TypeDef trigger) {
   uint32_t reg, pin;
@@ -44,7 +44,7 @@ void GPIOinConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n,
   if (mode == EXTI_Mode_Interrupt || mode == EXTI_Mode_Event) {
     reg = SYSCFG->EXTICR[pin_n >> 2U]; /* EXTernal Interrupt Configuration Register */
     reg &= ~(0xFU << (4U * (pin_n & 3U)));
-    reg |= (((uint32_t)gpio - AHB1PERIPH_BASE) >> 10U) << (4U * (pin_n & 3U));
+    reg |= (((uint32_t) gpio - AHB1PERIPH_BASE) >> 10U) << (4U * (pin_n & 3U));
     SYSCFG->EXTICR[pin_n >> 2U] = reg;
 
     /* Zmienna pin_n zawiera numer wyprowadzenia, a pin jest maską bitową. */
@@ -53,12 +53,10 @@ void GPIOinConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n,
     if (trigger == EXTI_Trigger_Rising) {
       EXTI->FTSR &= ~pin; /* Falling Trigger Selection Register */
       EXTI->RTSR |= pin;  /* Rising Trigger Selection Register */
-    }
-    else if (trigger == EXTI_Trigger_Falling) {
+    } else if (trigger == EXTI_Trigger_Falling) {
       EXTI->RTSR &= ~pin;
       EXTI->FTSR |= pin;
-    }
-    else if (trigger == EXTI_Trigger_Rising_Falling) {
+    } else if (trigger == EXTI_Trigger_Rising_Falling) {
       EXTI->RTSR |= pin;
       EXTI->FTSR |= pin;
     }
@@ -67,8 +65,7 @@ void GPIOinConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n,
       /* Najpierw zablokuj zdarzenie, a potem uaktywnij przerwanie. */
       EXTI->EMR &= ~pin; /* Event Mask Register */
       EXTI->IMR |= pin;  /* Interrupt Mask Register */
-    }
-    else { /* mode == EXTI_Mode_Event */
+    } else { /* mode == EXTI_Mode_Event */
       /* Najpierw zablokuj przerwanie, a potem uaktywnij zdarzenie. */
       EXTI->IMR &= ~pin;
       EXTI->EMR |= pin;
@@ -88,7 +85,7 @@ void GPIOinConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n,
            GPIO_Fast_Speed (2), GPIO_High_Speed (3);
   pull  -- rezystor: brak GPIO_PuPd_NOPULL (0), podciągający do zasilania
            GPIO_PuPd_UP (1), ściągający do masy GPIO_PuPd_DOWN (2). */
-void GPIOoutConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n,
+void GPIOoutConfigure(GPIO_TypeDef *const gpio, uint32_t pin_n,
                       GPIOOType_TypeDef otype, GPIOSpeed_TypeDef speed,
                       GPIOPuPd_TypeDef pull) {
   uint32_t reg;
@@ -124,7 +121,7 @@ void GPIOoutConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n,
   pull  -- rezystor: brak GPIO_PuPd_NOPULL (0), podciągający do zasilania
            GPIO_PuPd_UP (1), ściągający do masy GPIO_PuPd_DOWN (2);
   fun   -- wybór funkcji alternatywnej. */
-void GPIOafConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n,
+void GPIOafConfigure(GPIO_TypeDef *const gpio, uint32_t pin_n,
                      GPIOOType_TypeDef otype, GPIOSpeed_TypeDef speed,
                      GPIOPuPd_TypeDef pull, uint32_t fun) {
   uint32_t reg;
@@ -159,7 +156,7 @@ void GPIOafConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n,
   gpio  -- nazwa układu peryferyjnego obsługującego port (adres początku
            obszaru pamięci z rejestrami tego portu): GPIOA, GPIOB, ...;
   pin_n -- numer wyprowadzenia: 0, 1, 2, ..., 15. */
-void GPIOainConfigure(GPIO_TypeDef * const gpio, uint32_t pin_n) {
+void GPIOainConfigure(GPIO_TypeDef *const gpio, uint32_t pin_n) {
   uint32_t reg;
 
   reg = gpio->PUPDR;            /* Dla wyprowadzeń analogowych rezystory */
