@@ -6,7 +6,7 @@
 #define HSI_HZ 16000000U
 #define PCLK1_HZ HSI_HZ
 
-#define SEND_QUEUE_SIZE 32
+#define SEND_QUEUE_SIZE 64
 #define RECEIVE_QUEUE_SIZE 32
 
 typedef enum {
@@ -20,5 +20,7 @@ void uartSetup();
 UartIOResult uartSend(const char *data, uint32_t size, void (*callback)(uint32_t));
 
 UartIOResult uartReceive(char *buffer, uint32_t size, void (*callback)(char *, uint32_t));
+
+void waitForSend();
 
 #endif //DUSTSENSOR_UART_H

@@ -23,6 +23,8 @@ static ReceiveBlock receive_queue[RECEIVE_QUEUE_SIZE];
 static uint32_t receive_queue_elems_count = 0;
 static uint32_t receive_queue_index = 0;
 
+static volatile int sendInProgess = 0;
+
 #define TransmissionInProgress() (!((DMA1_Stream6->CR & DMA_SxCR_EN) == 0 && (DMA1->HISR & DMA_HISR_TCIF6) == 0))
 #define ReceivingInProgress() (!((DMA1_Stream5->CR & DMA_SxCR_EN) == 0 && (DMA1->HISR & DMA_HISR_TCIF5) == 0))
 
@@ -93,6 +95,7 @@ UartIOResult uartSend(const char *data, uint32_t size, void (*callback)(uint32_t
   if (send_queue_elems_count == SEND_QUEUE_SIZE) return UART_QUEUE_FULL;
   send_queue[(send_queue_index + send_queue_elems_count++) % SEND_QUEUE_SIZE] = (SendBlock) {data, size, callback};
   if (!TransmissionInProgress()) {
+    sendInProgess = 1;
     initSend();
   }
   return UART_OK;
@@ -106,6 +109,7 @@ void DMA1_Stream6_IRQHandler() {
     send_queue_elems_count--;
     DMA1->HIFCR = DMA_HIFCR_CTCIF6;
     if (send_queue_elems_count > 0) initSend();
+    else sendInProgess = 0;
   }
 }
 
@@ -124,6 +128,9 @@ UartIOResult uartReceive(char *buffer, uint32_t size, void (*callback)(char *, u
     initReceive();
   }
   return UART_OK;
+}
+void waitForSend() {
+  while (sendInProgess) {}
 }
 
 void DMA1_Stream5_IRQHandler() {
