@@ -22,7 +22,6 @@ void appStartup() {
   multiMeasureSetup(&sendResult);
   schedulerSetup();
   schedulerStart(WAIT_TIME_SECONDS, &multiMeasure);
-  multiMeasure();
 }
 
 void mainLoop() {
