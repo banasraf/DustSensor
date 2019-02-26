@@ -1,9 +1,11 @@
 #include <timers.h>
 #include <gpio.h>
 
-#define LONG_ARR 65306u
-#define LONG_PRESCALER_SECOND 245u
+// SCHEDULER_ARR * SCHEDULER_PRESCALER / CLOCK_FREQ = 1 second
+#define SCHEDULER_ARR 65306u
+#define SCHEDULER_PRESCALER 245u
 
+// MILLI_TIMER_PRESCALER / CLOCK_FREQ = 1 millisecond
 #define MILLI_TIMER_PRESCALER 16000u
 
 static void nop() {};
@@ -33,7 +35,7 @@ void microTimerStart(uint16_t microseconds) {
 void schedulerSetup() {
   RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
   TIM4->CR1 = 0; // count up
-  TIM4->ARR = LONG_ARR;
+  TIM4->ARR = SCHEDULER_ARR;
   TIM4->DIER = TIM_DIER_UIE;
   NVIC_EnableIRQ(TIM4_IRQn);
 }
@@ -41,7 +43,7 @@ void schedulerSetup() {
 void schedulerStart(uint8_t seconds, void (*handler)()) {
   scheduler_handler = handler;
   TIM4->CR1 |=  TIM_CR1_UDIS;
-  TIM4->PSC = seconds * LONG_PRESCALER_SECOND;
+  TIM4->PSC = seconds * SCHEDULER_PRESCALER;
   TIM4->CR1 &= ~TIM_CR1_UDIS;
   TIM4->EGR = TIM_EGR_UG; // update
   TIM4->SR = ~TIM_SR_UIF;
