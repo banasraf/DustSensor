@@ -3,6 +3,13 @@
 #include <adc.h>
 #include <timers.h>
 
+// The procedure of measurement:
+// - turn on ILED
+// - wait MEASURE_DELAY microseconds for output stabilization
+// - measure the voltage on output
+// - scale up the vale by VOLTAGE_SCALE
+// - calculate the dust concentration using the linear relationship with voltage
+
 #define MEASURE_DELAY 280 // microseconds
 
 #define ILEDon() \
