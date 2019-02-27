@@ -16,24 +16,24 @@
 #define ClockSetup() \
   RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 
-static void nop(float _) {}
+static void nop(uint32_t _) {}
 
-static void (*_handler)(float) = &nop;
+static void (*_handler)(uint32_t) = &nop;
 
-float volToConcentration(float millivolts) {
-  float scaled_v = millivolts * VOLTAGE_SCALE;
-  float result;
+uint32_t volToConcentration(uint32_t millivolts) {
+  uint32_t scaled_v = millivolts * VOLTAGE_SCALE;
+  uint32_t result;
   if (scaled_v <= VOLTAGE_BIAS) {
     result = 0;
   } else {
-    result = (scaled_v - VOLTAGE_BIAS) * SLOPE;
+    result = (scaled_v - VOLTAGE_BIAS) * SLOPE / 1000;
   }
   return result;
 }
 
-void adcHandle(float millivolts) {
+void adcHandle(uint32_t millivolts) {
   ILEDoff();
-  float result = volToConcentration(millivolts);
+  uint32_t result = volToConcentration(millivolts);
   (*_handler)(result);
 }
 
@@ -50,10 +50,10 @@ void dustSensorSetup() {
   microTimerSetHandler(&startProbing);
 }
 
-void dustSensorSetHandler(void (*handler)(float)) {
+void dustSensorSetHandler(void (*handler)(uint32_t)) {
   _handler = handler;
 }
 void dustSensorMeasure() {
   ILEDon();
-  microTimerStart(280);
+  microTimerStart(MEASURE_DELAY);
 }

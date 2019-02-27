@@ -1,7 +1,7 @@
 #include <adc.h>
 #include <gpio.h>
 
-static void (*next_callback)(float);
+static void (*next_callback)(uint32_t);
 
 #define CYCLES_MAX 8U
 
@@ -9,7 +9,7 @@ static void (*next_callback)(float);
 
 #define CHANNEL_CBASE 10U
 
-#define ADC_DR_MAX_VALUE 4096.f
+#define ADC_BITS 12U
 
 void adcInit(uint16_t channel) {
   if (channel < CHANNEL_CBASE) {
@@ -29,14 +29,14 @@ void adcInit(uint16_t channel) {
   ADC1->CR2 |= ADC_CR2_ADON;
 }
 
-void adcMeasure(void (*callback)(float)) {
+void adcMeasure(void (*callback)(uint32_t)) {
   next_callback = callback;
   ADC1->CR2 |= ADC_CR2_SWSTART;
 }
 
 void ADC_IRQHandler() {
   if (ADC1->SR & ADC_SR_EOC) {
-    float vol = (REF_V / ADC_DR_MAX_VALUE) * ADC1->DR;
-    (*next_callback)(vol);
+    uint32_t millivolts = (REF_V * (uint32_t) ADC1->DR) >> ADC_BITS;
+    (*next_callback)(millivolts);
   }
 }

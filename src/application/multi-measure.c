@@ -2,20 +2,20 @@
 #include <timers.h>
 #include <dust-sensor.h>
 
-static void (*_handler)(float);
+static void (*_handler)(uint32_t);
 
-static float buffer[MEASURES_COUNT];
+static uint32_t sum = 0;
 static unsigned measures = 0;
 
 void handleFinalResult() {
-  float sum = 0.f;
-  for (unsigned i = 0; i < MEASURES_COUNT; ++i) sum += buffer[i];
   (*_handler)(sum / MEASURES_COUNT);
+  sum = 0;
   measures = 0;
 }
 
-static void handleMeasurment(float result) {
-  buffer[measures++] = result;
+static void handleMeasurment(uint32_t result) {
+  sum += result;
+  ++measures;
   if (measures == MEASURES_COUNT) handleFinalResult();
 }
 
@@ -30,7 +30,7 @@ void multiMeasure() {
     measure();
 }
 
-void multiMeasureSetup(void (*handler)(float)) {
+void multiMeasureSetup(void (*handler)(uint32_t)) {
   _handler = handler;
   milliTimerSetup();
   milliTimerSetHandler(&measure);

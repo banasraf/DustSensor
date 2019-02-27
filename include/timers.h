@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#define CLOCK_FREQ 16000000u
+#define CLOCK_FREQ 16000000U
 
 void microTimerSetup();
 

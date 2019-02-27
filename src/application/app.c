@@ -8,9 +8,9 @@
 #include <stm32.h>
 
 #define MESSAGE_MAX_SIZE 128
-#define MESSAGE_FMT "PM 2.5 concentration: %.0f ug/m3 \r\n"
+#define MESSAGE_FMT "PM 2.5 concentration: %lu ug/m3 \r\n"
 
-void sendResult(float concentration) {
+void sendResult(uint32_t concentration) {
   char message[MESSAGE_MAX_SIZE];
   sprintf(message, MESSAGE_FMT, concentration);
   uartLog(message);

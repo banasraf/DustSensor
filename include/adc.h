@@ -6,10 +6,10 @@
 #define AdcClockSetup() \
   RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
 
-#define REF_V 3300
+#define REF_V 3300U
 
 void adcInit(uint16_t channel);
 
-void adcMeasure(void (*callback)(float));
+void adcMeasure(void (*callback)(uint32_t));
 
 #endif //DUSTSENSOR_ADC_H
